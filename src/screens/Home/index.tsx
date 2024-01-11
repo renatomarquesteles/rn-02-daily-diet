@@ -1,11 +1,25 @@
-import { Text } from 'react-native';
+import { Image } from 'react-native';
 
-import { Container } from './styles';
+import logoImg from '@assets/logo.png';
+import personImg from '@assets/person.png';
+
+import {
+  Container,
+  Header,
+  ProfilePicture,
+  ProfilePictureContainer,
+} from './styles';
 
 export function Home() {
   return (
     <Container>
-      <Text>Home</Text>
+      <Header>
+        <Image source={logoImg} />
+
+        <ProfilePictureContainer>
+          <ProfilePicture source={personImg} />
+        </ProfilePictureContainer>
+      </Header>
     </Container>
   );
 }
