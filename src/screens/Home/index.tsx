@@ -1,4 +1,5 @@
 import { Image, SectionList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import logoImg from '@assets/logo.png';
 import personImg from '@assets/person.png';
@@ -64,6 +65,12 @@ const DATA = [
 ];
 
 export function Home() {
+  const navigation = useNavigation();
+
+  function handleStatistics() {
+    navigation.navigate('statistics');
+  }
+
   return (
     <Container>
       <Header>
@@ -74,7 +81,7 @@ export function Home() {
         </ProfilePictureContainer>
       </Header>
 
-      <StatisticsContainer success={false}>
+      <StatisticsContainer success={false} onPress={handleStatistics}>
         <StatisticsPercentage>90.86%</StatisticsPercentage>
         <StatisticsText>of the food eaten meets the diet.</StatisticsText>
         <OpenIcon success={false} />

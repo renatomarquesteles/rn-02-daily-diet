@@ -13,3 +13,7 @@ npm i phosphor-react-native@1.1.2
 npx expo install react-native-svg
 
 npx expo install react-native-safe-area-context
+
+npm install @react-navigation/native
+npm install @react-navigation/native-stack
+npx expo install react-native-screens
