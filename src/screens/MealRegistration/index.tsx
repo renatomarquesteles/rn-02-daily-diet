@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
 
 import { Button } from '@components/Button';
 import { formatDate, formatTime } from '@utils/formatDateTime';
@@ -32,6 +33,7 @@ export function MealRegistration() {
   const [datePickerMode, setDatePickerMode] =
     useState<DatePickerModeType>('date');
   const [date, setDate] = useState(new Date());
+  const navigation = useNavigation();
 
   function handleDateChange(_: any, selectedDate: Date | undefined) {
     if (!selectedDate) return;
@@ -48,7 +50,7 @@ export function MealRegistration() {
   return (
     <PageContainer>
       <Header>
-        <BackButton>
+        <BackButton onPress={navigation.goBack}>
           <BackIcon />
         </BackButton>
 

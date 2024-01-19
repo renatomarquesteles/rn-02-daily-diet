@@ -93,9 +93,8 @@ export function Home() {
 
       <AddMealContainer>
         <AddMealTitle>Meals</AddMealTitle>
-        <Button onPress={handleAddMeal}>
-          <PlusIcon />
-          <ButtonLabel>Add Meal</ButtonLabel>
+        <Button onPress={handleAddMeal} icon={<PlusIcon />}>
+          Add Meal
         </Button>
       </AddMealContainer>
 
