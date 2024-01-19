@@ -71,6 +71,10 @@ export function Home() {
     navigation.navigate('statistics');
   }
 
+  function handleAddMeal() {
+    navigation.navigate('mealRegistration');
+  }
+
   return (
     <Container>
       <Header>
@@ -89,7 +93,7 @@ export function Home() {
 
       <AddMealContainer>
         <AddMealTitle>Meals</AddMealTitle>
-        <Button>
+        <Button onPress={handleAddMeal}>
           <PlusIcon />
           <ButtonLabel>Add Meal</ButtonLabel>
         </Button>

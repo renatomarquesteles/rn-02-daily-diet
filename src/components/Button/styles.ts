@@ -17,3 +17,9 @@ export const Container = styled(TouchableOpacity)<Props>`
   align-items: center;
   gap: 12px;
 `;
+
+export const ButtonText = styled.Text`
+  font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
+  font-size: ${({ theme }) => theme.FONT_SIZE.SM}px;
+  color: ${({ theme }) => theme.COLORS.WHITE};
+`;
