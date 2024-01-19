@@ -17,3 +17,5 @@ npx expo install react-native-safe-area-context
 npm install @react-navigation/native
 npm install @react-navigation/native-stack
 npx expo install react-native-screens
+
+npx expo install @react-native-community/datetimepicker

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Button } from '@components/Button';
+import { formatDate, formatTime } from '@utils/formatDateTime';
 
 import {
   BackButton,
@@ -22,8 +24,26 @@ import {
   Title,
 } from './styles';
 
+type DatePickerModeType = 'date' | 'time';
+
 export function MealRegistration() {
   const [isDiet, setIsDiet] = useState<boolean | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerMode, setDatePickerMode] =
+    useState<DatePickerModeType>('date');
+  const [date, setDate] = useState(new Date());
+
+  function handleDateChange(_: any, selectedDate: Date | undefined) {
+    if (!selectedDate) return;
+
+    setShowDatePicker(false);
+    setDate(selectedDate);
+  }
+
+  function handleOpenDatePicker(mode: DatePickerModeType = 'date') {
+    setShowDatePicker(true);
+    setDatePickerMode(mode);
+  }
 
   return (
     <PageContainer>
@@ -58,12 +78,24 @@ export function MealRegistration() {
           <InputsWrapper>
             <DateContainer>
               <InputLabel>Date</InputLabel>
-              <Input returnKeyType="next" />
+              <Input
+                value={formatDate(date)}
+                onFocus={() => handleOpenDatePicker('date')}
+                onPressIn={() => handleOpenDatePicker('date')}
+                showSoftInputOnFocus={false}
+                caretHidden
+              />
             </DateContainer>
 
             <DateContainer>
               <InputLabel>Time</InputLabel>
-              <Input returnKeyType="next" />
+              <Input
+                value={formatTime(date)}
+                onFocus={() => handleOpenDatePicker('time')}
+                onPressIn={() => handleOpenDatePicker('time')}
+                showSoftInputOnFocus={false}
+                caretHidden
+              />
             </DateContainer>
           </InputsWrapper>
 
@@ -89,6 +121,15 @@ export function MealRegistration() {
         </Content>
 
         <Button>Add meal</Button>
+
+        {showDatePicker && (
+          <DateTimePicker
+            mode={datePickerMode}
+            value={date}
+            onChange={handleDateChange}
+            is24Hour
+          />
+        )}
       </FormContainer>
     </PageContainer>
   );
