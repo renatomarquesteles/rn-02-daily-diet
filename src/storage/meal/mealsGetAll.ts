@@ -5,6 +5,7 @@ import { MEAL_COLLECTION } from '@storage/storageConfig';
 type StoredMealType = {
   id: string;
   name: string;
+  description: string;
   date: string;
   isDiet: boolean;
 };

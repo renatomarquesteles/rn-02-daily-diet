@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 
 import { Button } from '@components/Button';
 import { formatDate, formatTime } from '@utils/formatDateTime';
+import { mealCreate } from '@storage/meal/mealCreate';
 
 import {
   BackButton,
@@ -33,6 +36,8 @@ export function MealRegistration() {
   const [datePickerMode, setDatePickerMode] =
     useState<DatePickerModeType>('date');
   const [date, setDate] = useState(new Date());
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const navigation = useNavigation();
 
   function handleDateChange(_: any, selectedDate: Date | undefined) {
@@ -48,7 +53,23 @@ export function MealRegistration() {
   }
 
   function handleAddMeal() {
-    navigation.navigate('feedback', { success: false });
+    if (!name || !description || !date || isDiet === null) {
+      return Alert.alert(
+        'Missing information',
+        'Please fill in all the fields'
+      );
+    }
+
+    const meal = {
+      id: Crypto.randomUUID(),
+      name,
+      description,
+      date,
+      isDiet,
+    };
+
+    mealCreate(meal);
+    navigation.navigate('feedback', { success: isDiet });
   }
 
   return (
@@ -73,12 +94,16 @@ export function MealRegistration() {
         <Content>
           <InputContainer>
             <InputLabel>Name</InputLabel>
-            <Input returnKeyType="next" />
+            <Input returnKeyType="next" value={name} onChangeText={setName} />
           </InputContainer>
 
           <InputContainer>
             <InputLabel>Description</InputLabel>
-            <TextArea returnKeyType="next" />
+            <TextArea
+              returnKeyType="next"
+              value={description}
+              onChangeText={setDescription}
+            />
           </InputContainer>
 
           <InputsWrapper>

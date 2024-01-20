@@ -3,6 +3,7 @@ import { formatDate } from './formatDateTime';
 type MealType = {
   id: string;
   name: string;
+  description: string;
   date: string;
   isDiet: boolean;
 };
