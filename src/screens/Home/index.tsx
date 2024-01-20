@@ -8,6 +8,7 @@ import { Button } from '@components/Button';
 import { mealsGetAll } from '@storage/meal/mealsGetAll';
 import { formatTime } from '@utils/formatDateTime';
 import { groupMealsByDate } from '@utils/groupMealsByDate';
+import { sortDayMealsByTime, sortMealsListByTitle } from '@utils/sortMealsList';
 
 import {
   AddMealContainer,
@@ -31,6 +32,7 @@ import {
 type MealType = {
   id: string;
   name: string;
+  description: string;
   date: string;
   isDiet: boolean;
 };
@@ -42,14 +44,18 @@ type MealsByDateType = {
 export function Home() {
   const [mealsByDate, setMealsByDate] = useState<MealsByDateType>({});
   const navigation = useNavigation();
-  const listData = useMemo(
-    () =>
-      Object.keys(mealsByDate).map((item) => ({
-        title: item,
-        data: mealsByDate[item],
-      })),
-    [mealsByDate]
-  );
+  const listData = useMemo(() => {
+    const mealsDates = Object.keys(mealsByDate);
+    const mealsFormatted = mealsDates.map((date) => {
+      const timeSortedDailyMeals = sortDayMealsByTime(mealsByDate[date]);
+      return {
+        title: date,
+        data: timeSortedDailyMeals,
+      };
+    });
+
+    return sortMealsListByTitle(mealsFormatted);
+  }, [mealsByDate]);
 
   function handleStatistics() {
     navigation.navigate('statistics');
