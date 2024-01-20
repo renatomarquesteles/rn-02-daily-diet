@@ -133,7 +133,7 @@ export const MealName = styled.Text`
   padding: 0 12px;
 `;
 
-export const Date = styled.Text`
+export const DateTitle = styled.Text`
   ${({ theme }) => css`
     font-family: ${theme.FONT_FAMILY.BOLD};
     font-size: ${theme.FONT_SIZE.LG}px;

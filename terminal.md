@@ -19,3 +19,7 @@ npm install @react-navigation/native-stack
 npx expo install react-native-screens
 
 npx expo install @react-native-community/datetimepicker
+
+npm install @react-native-async-storage/async-storage
+
+npx expo install expo-crypto

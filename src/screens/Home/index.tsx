@@ -1,16 +1,19 @@
+import { useCallback, useMemo, useState } from 'react';
 import { Image, SectionList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import logoImg from '@assets/logo.png';
 import personImg from '@assets/person.png';
 import { Button } from '@components/Button';
+import { mealsGetAll } from '@storage/meal/mealsGetAll';
+import { formatTime } from '@utils/formatDateTime';
+import { groupMealsByDate } from '@utils/groupMealsByDate';
 
 import {
   AddMealContainer,
   AddMealTitle,
-  ButtonLabel,
   Container,
-  Date,
+  DateTitle,
   Header,
   MealContainer,
   MealName,
@@ -25,47 +28,28 @@ import {
   StatisticsText,
 } from './styles';
 
-const DATA = [
-  {
-    title: '01.12.24',
-    data: [
-      { name: 'Chicken Sandwich', time: '10:00', isDiet: true },
-      { name: 'Whey Protein', time: '09:30', isDiet: true },
-      { name: 'Ceasar Salad', time: '09:00', isDiet: true },
-      { name: 'Orange Juice', time: '08:30', isDiet: false },
-    ],
-  },
-  {
-    title: '01.11.24',
-    data: [
-      { name: 'Chicken Sandwich', time: '10:00', isDiet: true },
-      { name: 'Whey Protein', time: '09:30', isDiet: true },
-      { name: 'Ceasar Salad', time: '09:00', isDiet: true },
-      { name: 'Orange Juice', time: '08:30', isDiet: false },
-    ],
-  },
-  {
-    title: '01.10.24',
-    data: [
-      { name: 'Chicken Sandwich', time: '10:00', isDiet: true },
-      { name: 'Whey Protein', time: '09:30', isDiet: true },
-      { name: 'Ceasar Salad', time: '09:00', isDiet: true },
-      { name: 'Orange Juice', time: '08:30', isDiet: false },
-    ],
-  },
-  {
-    title: '01.09.24',
-    data: [
-      { name: 'Chicken Sandwich', time: '10:00', isDiet: true },
-      { name: 'Whey Protein', time: '09:30', isDiet: true },
-      { name: 'Ceasar Salad', time: '09:00', isDiet: true },
-      { name: 'Orange Juice', time: '08:30', isDiet: false },
-    ],
-  },
-];
+type MealType = {
+  id: string;
+  name: string;
+  date: string;
+  isDiet: boolean;
+};
+
+type MealsByDateType = {
+  [date: string]: MealType[];
+};
 
 export function Home() {
+  const [mealsByDate, setMealsByDate] = useState<MealsByDateType>({});
   const navigation = useNavigation();
+  const listData = useMemo(
+    () =>
+      Object.keys(mealsByDate).map((item) => ({
+        title: item,
+        data: mealsByDate[item],
+      })),
+    [mealsByDate]
+  );
 
   function handleStatistics() {
     navigation.navigate('statistics');
@@ -74,6 +58,26 @@ export function Home() {
   function handleAddMeal() {
     navigation.navigate('mealRegistration');
   }
+
+  async function fetchMeals() {
+    try {
+      const data = await mealsGetAll();
+
+      if (data.length > 0) {
+        return setMealsByDate(groupMealsByDate(data));
+      }
+
+      setMealsByDate({});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMeals();
+    }, [])
+  );
 
   return (
     <Container>
@@ -99,16 +103,18 @@ export function Home() {
       </AddMealContainer>
 
       <SectionList
-        sections={DATA}
-        keyExtractor={(item, index) => item.name + index}
+        sections={listData}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <MealContainer>
-            <MealTime>{item.time}</MealTime>
+            <MealTime>{formatTime(new Date(item.date))}</MealTime>
             <MealName>{item.name}</MealName>
             <MealType isDiet={item.isDiet} />
           </MealContainer>
         )}
-        renderSectionHeader={({ section: { title } }) => <Date>{title}</Date>}
+        renderSectionHeader={({ section: { title } }) => (
+          <DateTitle>{title}</DateTitle>
+        )}
         showsVerticalScrollIndicator={false}
       />
     </Container>
