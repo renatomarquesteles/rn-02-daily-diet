@@ -4,7 +4,7 @@ export declare global {
       home: undefined;
       statistics: undefined;
       mealRegistration: undefined | { meal: string };
-      feedback: undefined;
+      feedback: undefined | { success: boolean };
       details: {
         meal: string;
       };

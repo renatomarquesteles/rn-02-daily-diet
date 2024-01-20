@@ -47,6 +47,10 @@ export function MealRegistration() {
     setDatePickerMode(mode);
   }
 
+  function handleAddMeal() {
+    navigation.navigate('feedback', { success: false });
+  }
+
   return (
     <PageContainer>
       <Header>
@@ -122,7 +126,7 @@ export function MealRegistration() {
           </InputContainer>
         </Content>
 
-        <Button>Add meal</Button>
+        <Button onPress={handleAddMeal}>Add meal</Button>
 
         {showDatePicker && (
           <DateTimePicker
