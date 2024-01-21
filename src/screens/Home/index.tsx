@@ -43,6 +43,8 @@ type MealsByDateType = {
 
 export function Home() {
   const [mealsByDate, setMealsByDate] = useState<MealsByDateType>({});
+  const [isOnDiet, setIsOnDiet] = useState(false);
+  const [dietPercentage, setDietPercentage] = useState(0);
   const navigation = useNavigation();
   const listData = useMemo(() => {
     const mealsDates = Object.keys(mealsByDate);
@@ -65,15 +67,25 @@ export function Home() {
     navigation.navigate('mealRegistration');
   }
 
+  function updateDietPercentage(meals: MealType[]) {
+    const mealsOnDietCount = meals.filter((meal) => meal.isDiet).length;
+    const percentage = mealsOnDietCount / meals.length;
+
+    setDietPercentage(percentage * 100);
+    setIsOnDiet(percentage >= 0.5);
+  }
+
   async function fetchMeals() {
     try {
       const data = await mealsGetAll();
 
       if (data.length > 0) {
+        updateDietPercentage(data);
         return setMealsByDate(groupMealsByDate(data));
       }
 
       setMealsByDate({});
+      setDietPercentage(0);
     } catch (error) {
       console.log(error);
     }
@@ -95,10 +107,12 @@ export function Home() {
         </ProfilePictureContainer>
       </Header>
 
-      <StatisticsContainer success={false} onPress={handleStatistics}>
-        <StatisticsPercentage>90.86%</StatisticsPercentage>
+      <StatisticsContainer success={isOnDiet} onPress={handleStatistics}>
+        <StatisticsPercentage>
+          {dietPercentage.toFixed(2)}%
+        </StatisticsPercentage>
         <StatisticsText>of the food eaten meets the diet.</StatisticsText>
-        <OpenIcon success={false} />
+        <OpenIcon success={isOnDiet} />
       </StatisticsContainer>
 
       <AddMealContainer>
