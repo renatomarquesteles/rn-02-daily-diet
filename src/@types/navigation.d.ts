@@ -1,16 +1,19 @@
+type MealType = {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  isDiet: boolean;
+};
+
 export declare global {
   namespace ReactNavigation {
     interface RootParamList {
       home: undefined;
-      statistics: undefined;
+      statistics: { meals: MealType[] };
       mealRegistration: undefined | { meal: string };
-      feedback: undefined | { success: boolean };
-      details: {
-        meal: string;
-      };
-      update: {
-        meal: string;
-      };
+      feedback: { success: boolean };
+      details: { meal: string };
     }
   }
 }

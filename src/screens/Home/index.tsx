@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, SectionList } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -37,19 +37,19 @@ type MealType = {
   isDiet: boolean;
 };
 
-type MealsByDateType = {
-  [date: string]: MealType[];
-};
-
 export function Home() {
-  const [mealsByDate, setMealsByDate] = useState<MealsByDateType>({});
+  const [meals, setMeals] = useState<MealType[]>([]);
   const [isOnDiet, setIsOnDiet] = useState(false);
   const [dietPercentage, setDietPercentage] = useState(0);
   const navigation = useNavigation();
+
   const listData = useMemo(() => {
+    const mealsByDate = groupMealsByDate(meals);
     const mealsDates = Object.keys(mealsByDate);
     const mealsFormatted = mealsDates.map((date) => {
-      const timeSortedDailyMeals = sortDayMealsByTime(mealsByDate[date]);
+      const timeSortedDailyMeals = sortDayMealsByTime(
+        mealsByDate[date]
+      ).reverse();
       return {
         title: date,
         data: timeSortedDailyMeals,
@@ -57,10 +57,10 @@ export function Home() {
     });
 
     return sortMealsListByTitle(mealsFormatted);
-  }, [mealsByDate]);
+  }, [meals]);
 
   function handleStatistics() {
-    navigation.navigate('statistics');
+    navigation.navigate('statistics', { meals });
   }
 
   function handleAddMeal() {
@@ -78,14 +78,7 @@ export function Home() {
   async function fetchMeals() {
     try {
       const data = await mealsGetAll();
-
-      if (data.length > 0) {
-        updateDietPercentage(data);
-        return setMealsByDate(groupMealsByDate(data));
-      }
-
-      setMealsByDate({});
-      setDietPercentage(0);
+      setMeals(data);
     } catch (error) {
       console.log(error);
     }
@@ -96,6 +89,10 @@ export function Home() {
       fetchMeals();
     }, [])
   );
+
+  useEffect(() => {
+    updateDietPercentage(meals);
+  }, [meals]);
 
   return (
     <Container>
