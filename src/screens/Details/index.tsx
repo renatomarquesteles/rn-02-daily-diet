@@ -1,6 +1,8 @@
+import { Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { Button } from '@components/Button';
+import { mealRemove } from '@storage/meal/mealRemove';
 import { formatDate, formatTime } from '@utils/formatDateTime';
 
 import {
@@ -48,7 +50,22 @@ export function Details() {
     navigation.navigate('mealRegistration', { meal });
   }
 
-  function handleDeleteMeal() {}
+  async function deleteMeal() {
+    try {
+      await mealRemove(meal.id);
+      navigation.navigate('home');
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Delete meal', 'Cannot delete this meal');
+    }
+  }
+
+  function handleDeleteMeal() {
+    Alert.alert('Delete Meal', 'Would you like to delete this meal?', [
+      { text: 'No', style: 'cancel' },
+      { text: 'Yes', onPress: () => deleteMeal() },
+    ]);
+  }
 
   return (
     <Container success={meal.isDiet}>
