@@ -100,7 +100,7 @@ export const ButtonLabel = styled.Text`
   `}
 `;
 
-export const MealContainer = styled.View`
+export const MealContainer = styled.TouchableOpacity`
   width: 100%;
   border: 1px solid ${({ theme }) => theme.COLORS.GRAY_500};
   border-radius: 6px;

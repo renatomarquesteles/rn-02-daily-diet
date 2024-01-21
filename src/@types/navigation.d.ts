@@ -11,9 +11,9 @@ export declare global {
     interface RootParamList {
       home: undefined;
       statistics: { meals: MealType[] };
-      mealRegistration: undefined | { meal: string };
+      mealRegistration: undefined | { meal: MealType };
       feedback: { success: boolean };
-      details: { meal: string };
+      details: { meal: MealType };
     }
   }
 }

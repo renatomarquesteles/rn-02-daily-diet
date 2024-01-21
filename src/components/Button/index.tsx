@@ -8,11 +8,11 @@ type Props = TouchableOpacityProps & {
   icon?: ReactNode;
 };
 
-export function Button({ type = 'PRIMARY', icon, children, ...rest }: Props) {
+export function Button({ type = 'primary', icon, children, ...rest }: Props) {
   return (
     <Container type={type} {...rest}>
       {icon}
-      <ButtonText>{children}</ButtonText>
+      <ButtonText type={type}>{children}</ButtonText>
     </Container>
   );
 }

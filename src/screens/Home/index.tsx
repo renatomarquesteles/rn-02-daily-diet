@@ -67,6 +67,10 @@ export function Home() {
     navigation.navigate('mealRegistration');
   }
 
+  function handleMealDetails(meal: MealType) {
+    navigation.navigate('details', { meal });
+  }
+
   function updateDietPercentage(meals: MealType[]) {
     const mealsOnDietCount = meals.filter((meal) => meal.isDiet).length;
     const percentage = mealsOnDietCount / meals.length;
@@ -123,7 +127,7 @@ export function Home() {
         sections={listData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <MealContainer>
+          <MealContainer onPress={() => handleMealDetails(item)}>
             <MealTime>{formatTime(new Date(item.date))}</MealTime>
             <MealName>{item.name}</MealName>
             <MealType isDiet={item.isDiet} />
