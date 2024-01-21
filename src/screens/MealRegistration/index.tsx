@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Crypto from 'expo-crypto';
 
 import { Button } from '@components/Button';
 import { formatDate, formatTime } from '@utils/formatDateTime';
 import { mealCreate } from '@storage/meal/mealCreate';
+import { mealUpdate } from '@storage/meal/mealUpdate';
 
 import {
   BackButton,
@@ -30,6 +31,18 @@ import {
 
 type DatePickerModeType = 'date' | 'time';
 
+type MealType = {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  isDiet: boolean;
+};
+
+type RouteParams = {
+  meal: MealType;
+};
+
 export function MealRegistration() {
   const [isDiet, setIsDiet] = useState<boolean | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -38,7 +51,9 @@ export function MealRegistration() {
   const [date, setDate] = useState(new Date());
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [mealEditId, setMealEditId] = useState('');
   const navigation = useNavigation();
+  const route = useRoute();
 
   function handleDateChange(_: any, selectedDate: Date | undefined) {
     if (!selectedDate) return;
@@ -60,7 +75,7 @@ export function MealRegistration() {
       );
     }
 
-    const meal = {
+    const newMeal = {
       id: Crypto.randomUUID(),
       name,
       description,
@@ -68,9 +83,47 @@ export function MealRegistration() {
       isDiet,
     };
 
-    mealCreate(meal);
+    mealCreate(newMeal);
     navigation.navigate('feedback', { success: isDiet });
   }
+
+  async function handleEditMeal() {
+    if (!mealEditId) {
+      return Alert.alert('Meal not found');
+    }
+
+    if (!name || !description || !date || isDiet === null) {
+      return Alert.alert(
+        'Missing information',
+        'Please fill in all the fields'
+      );
+    }
+
+    const updatedMeal = {
+      id: mealEditId,
+      name,
+      description,
+      date: date.toISOString(),
+      isDiet,
+    };
+
+    await mealUpdate(updatedMeal);
+    navigation.navigate('details', { meal: updatedMeal });
+  }
+
+  useEffect(() => {
+    if (!route.params) return;
+
+    const { meal } = route.params as RouteParams;
+
+    if (!meal) return;
+
+    setMealEditId(meal.id);
+    setName(meal.name);
+    setDescription(meal.description);
+    setDate(new Date(meal.date));
+    setIsDiet(meal.isDiet);
+  }, []);
 
   return (
     <PageContainer>
@@ -79,7 +132,7 @@ export function MealRegistration() {
           <BackIcon />
         </BackButton>
 
-        <Title>New Meal</Title>
+        <Title>{mealEditId ? 'Edit Meal' : 'New Meal'}</Title>
       </Header>
 
       <FormContainer
@@ -151,7 +204,11 @@ export function MealRegistration() {
           </InputContainer>
         </Content>
 
-        <Button onPress={handleAddMeal}>Add meal</Button>
+        {mealEditId ? (
+          <Button onPress={handleEditMeal}>Save changes</Button>
+        ) : (
+          <Button onPress={handleAddMeal}>Add meal</Button>
+        )}
 
         {showDatePicker && (
           <DateTimePicker
